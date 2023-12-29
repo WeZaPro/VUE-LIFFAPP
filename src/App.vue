@@ -2,8 +2,8 @@
   <div id="app">
     <img :src="profile.pictureUrl" width="60" height="60" />
     <!-- {{ profile.displayName }} -->
-    <p>display Name : {{ profile.displayName }}</p>
-    <p>userID : {{ profile.userId }}</p>
+    <p id="displayName">display Name : {{ profile.displayName }}</p>
+    <p id="userId">userID : {{ profile.userId }}</p>
     <p>param : {{ this.getParam }}</p>
   </div>
   <div id="btn">
