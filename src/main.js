@@ -47,7 +47,7 @@ createApp(App)
   .use(router)
   .use(
     createGtm({
-      id: "GTM-5Q53KCQ6", // GTM ID
+      id: "GTM-KV2TRD94", // GTM ID
     })
   )
   .mount("#app");
