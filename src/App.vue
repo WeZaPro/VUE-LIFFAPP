@@ -77,7 +77,9 @@ export default {
         if (data.friendFlag) {
           console.log("getFriendship--> = true");
           this.alert = data.friendFlag;
-          alert(`data.friendFlag--> ${this.alert}`);
+          // alert(`data.friendFlag--> ${this.alert}`);
+          alert(`Send Message-->`);
+          this.sendMsg();
         }
       });
     },
@@ -91,6 +93,49 @@ export default {
     openLineChat() {
       console.log("openLineChat--> ");
       window.open("https://line.me/ti/p/@889mtekm", "_blank");
+    },
+    async sendMsg() {
+      const profile = await liff.getProfile();
+      console.log("userId---> " + profile.userId);
+      // console.log("liff.getContext().type--> ", liff.getContext().type);
+      // if (liff.getContext().type !== "none") {
+      //   await liff.sendMessages([
+      //     {
+      //       type: "sticker",
+      //       stickerId: 1,
+      //       packageId: 1,
+      //     },
+      //   ]);
+      //   alert("Message sent");
+      // }
+
+      if (!liff.isInClient()) {
+        window.alert(
+          "This button is unavailable as LIFF is currently being opened in an external browser."
+        );
+      } else {
+        await liff
+          .sendMessages([
+            {
+              type: "text",
+              text: `Register/${profile.displayName}`,
+            },
+            // {
+            //   type: "text",
+            //   text: "Register",
+            // },
+            // {
+            //   type: "text",
+            //   text: profile.displayName,
+            // },
+          ])
+          .then(() => {
+            window.alert(`Message sent Register ` + profile.userId);
+          })
+          .catch((error) => {
+            window.alert("Error sending message: " + error);
+          });
+      }
     },
   },
 };
