@@ -1,32 +1,13 @@
-<script setup></script>
-
 <template>
   <div id="app">
-    <!-- <nav>
-      <ul>
-        <li>
-          <router-link to="/" class="text-white decor-none">Home</router-link>
-        </li>
-        <li>
-          <router-link to="/about" class="text-white decor-none"
-            >About</router-link
-          >
-        </li>
-      </ul>
-    </nav> -->
-    <h1>WEB SECOND PAGE App Page Liff App</h1>
-    <!-- <router-view></router-view> -->
-  </div>
-  <div id="liff">
-    <!-- <img :src="profile.pictureUrl" width="60" height="60" /> -->
+    <img :src="profile.pictureUrl" width="60" height="60" />
     <!-- {{ profile.displayName }} -->
     <p>display Name : {{ profile.displayName }}</p>
-    <p>Name : {{ displayName }}</p>
     <p>userID : {{ profile.userId }}</p>
-
+    <p>param : {{ this.getParam }}</p>
+  </div>
+  <div id="btn">
     <button @click="openLineChat">Line@</button>
-    <button @click="sendMsg">chat</button>
-    <button @click="getProfile">profile</button>
   </div>
 </template>
 
@@ -37,7 +18,7 @@ import liff from "@line/liff";
 export default {
   name: "App",
   components: {
-    // HelloWorld,
+    //HelloWorld,
   },
   data() {
     return {
@@ -50,65 +31,48 @@ export default {
     };
   },
   mounted() {
-    console.log("MOUNT===>");
-    //liff.init({ liffId: "1656824759-lQKpOazZ" });
+    let uri = window.location.search.substring(1);
+    let params = new URLSearchParams(uri);
     liff
-      .init({ liffId: "1656824759-lQKpOazZ" })
-      .then(async () => {
-        if (liff.isLoggedIn()) {
-          console.log("LIFF--->", liff.getProfile());
-          const profile = await liff.getProfile();
-          this.displayName = profile.displayName;
-        } else {
+      .init({ liffId: "1656824759-PonrgLDq" })
+      .then(() => {
+        if (!liff.isLoggedIn()) {
           liff.login();
+        } else {
+          this.loggedIn = liff.isLoggedIn();
+          console.log("isLoggedIn--> ", liff.isLoggedIn());
+          console.log("getIDToken--> ", liff.getIDToken());
+          console.log("getContext--> ", liff.getContext());
+          console.log("getOS--> ", liff.getOS());
+          console.log("isInClient--> ", liff.isInClient());
+          //console.log("getAdvertisingId--> ", liff.getAdvertisingId());
+          //console.log("getAId--> ", liff.getAId());
+          console.log("getVersion--> ", liff.getVersion());
+          //console.log("getEnvironment--> ", liff.getEnvironment());
+
+          // get queryString
+          this.getParam = params.get("param");
+          console.log("param--->", this.getParam);
+
+          this.getProfile();
+          // this.getEnvironment();
+          this.getFriendship();
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.occoredError = "error:" + err;
       });
-
-    // await liff.init({ liffId: "1656824759-lQKpOazZ" });
-    // const profile = await liff.getProfile();
-    //alert("start");
-    //(((((())))))
-    // let uri = window.location.search.substring(1);
-    // let params = new URLSearchParams(uri);
-    // liff
-    //   .init({ liffId: "1656824759-lQKpOazZ" })
-    //   .then(() => {
-    //     if (!liff.isLoggedIn()) {
-    //       liff.login();
-    //     } else {
-    //       this.loggedIn = liff.isLoggedIn();
-    //       alert(`Line Login--> `);
-    //       // get queryString
-    //       this.getParam = params.get("param");
-    //       console.log("param--->", this.getParam);
-    //       this.getProfile();
-    //       // this.getEnvironment();
-    //       this.getFriendship();
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     this.occoredError = "error:" + err;
-    //   });
-  },
-  created() {
-    liff.init({ liffId: "1656824759-lQKpOazZ" });
   },
   methods: {
-    getProfile() {
-      // liff.init({ liffId: "1656824759-lQKpOazZ" });
-      liff.getProfile().then((profile) => {
-        alert("profile" + profile);
+    async getProfile() {
+      await liff.getProfile().then((profile) => {
         console.log("profile--> ", profile);
         this.profile = profile;
         // console.log("this.profile--> ", this.profile);
       });
     },
-    getFriendship() {
-      //await liff.init({ liffId: "1656824759-lQKpOazZ" });
-      liff.getFriendship().then((data) => {
+    async getFriendship() {
+      await liff.getFriendship().then((data) => {
         console.log("getFriendship--> ", data);
         if (data.friendFlag) {
           console.log("getFriendship--> = true");
@@ -117,10 +81,9 @@ export default {
         }
       });
     },
-    getAccessToken() {
-      liff.init({ liffId: "1656824759-lQKpOazZ" });
+    async getAccessToken() {
       console.log("token--> ");
-      liff.getAccessToken().then((token) => {
+      await liff.getAccessToken().then((token) => {
         console.log("token--> ", token);
       });
     },
@@ -129,76 +92,26 @@ export default {
       console.log("openLineChat--> ");
       window.open("https://line.me/ti/p/@889mtekm", "_blank");
     },
-
-    sendMsg() {
-      liff.init({ liffId: "1656824759-lQKpOazZ" });
-      //const profile = await liff.getProfile();
-      //console.log("userId---> " + profile.userId);
-
-      liff
-        .sendMessages([
-          {
-            type: "text",
-            // text: `Register/${profile.displayName}`,
-            text: `Register`,
-          },
-        ])
-        .then(() => {
-          window.alert(`Message sent Register `);
-        })
-        .catch((error) => {
-          window.alert("Error sending message: " + error);
-        });
-
-      // if (!liff.isInClient()) {
-      //   window.alert(
-      //     "This button is unavailable as LIFF is currently being opened in an external browser."
-      //   );
-      // } else {
-      //   await liff
-      //     .sendMessages([
-      //       {
-      //         type: "text",
-      //         // text: `Register/${profile.displayName}`,
-      //         text: `Register`,
-      //       },
-      //     ])
-      //     .then(() => {
-      //       window.alert(`Message sent Register `);
-      //     })
-      //     .catch((error) => {
-      //       window.alert("Error sending message: " + error);
-      //     });
-      // }
-    },
   },
 };
 </script>
 
-<style scoped>
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 10px;
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 
-nav ul li {
-  background-color: hsl(252, 48%, 57%);
-  padding: 4px 6px;
-  border-radius: 5px;
-  color: #fff;
-  transition: 0.5s;
-}
-
-nav ul li:hover {
-  background-color: hsl(252, 38%, 38%);
-}
-
-.text-white {
-  color: white;
-}
-
-.decor-none {
-  text-decoration: none;
+#btn {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 </style>
