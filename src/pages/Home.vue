@@ -37,7 +37,7 @@ export default {
     let uri = window.location.search.substring(1);
     let params = new URLSearchParams(uri);
     liff
-      .init({ liffId: "1656824759-lQKpOazZ" })
+      .init({ liffId: "1656824759-lQKpOazZ",withLoginOnExternalBrowser })
       .then(() => {
         if (!liff.isLoggedIn()) {
           liff.login();
